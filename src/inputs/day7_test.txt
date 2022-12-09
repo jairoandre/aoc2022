@@ -13,6 +13,7 @@ dir e
 $ cd e
 $ ls
 584 i
+100000 ijk
 $ cd ..
 $ cd ..
 $ cd d

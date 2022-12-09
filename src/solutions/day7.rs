@@ -33,6 +33,8 @@ pub fn solve() -> Result<(), Box<dyn std::error::Error>> {
         list: Vec::new(),
     };
 
+    let mut count_dir = 0;
+
     let mut map: HashMap<String, i32> = HashMap::new();
     let mut current_dir: String = String::from("");
 
@@ -49,9 +51,11 @@ pub fn solve() -> Result<(), Box<dyn std::error::Error>> {
                     map.insert(current_dir.clone(), current_size + total_size_previous);
 
                 } else {
-                    directory.list.push(name.to_owned());
-                    map.insert(name.to_owned(), 0);
-                    current_dir = String::from(name);
+                    let dir_name = format!("{name}{count_dir}");
+                    directory.list.push(dir_name.clone());
+                    map.insert(dir_name.clone(), 0);
+                    current_dir = dir_name;
+                    count_dir += 1;
                 }
                 continue;
             }
@@ -85,8 +89,8 @@ pub fn solve() -> Result<(), Box<dyn std::error::Error>> {
     let mut total = 0;
     for (k, v) in map.iter() {
         if *v < 100_000 && k != "/" {
+            let t = total;
             total += *v;
-            println!("included {v}: {k}");
         }
     }
     println!("Total: {total}");
