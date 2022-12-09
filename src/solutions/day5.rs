@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::collections::Stack;
 use regex::Regex;
 
 /*
@@ -15,10 +14,9 @@ use regex::Regex;
  1   2   3   4   5   6   7   8   9
  */
 
-struct SupplyStacks(Vec<Stack<T>>);
 
-pub fn create_stack(args: &[&str]) -> Stack<&str> {
-    let mut stack = Stack::new();
+pub fn create_stack(args: Vec<&str>) -> Vec<&str> {
+    let mut stack = Vec::new();
     for arg in args {
         stack.push(arg);
     }
@@ -28,19 +26,18 @@ pub fn create_stack(args: &[&str]) -> Stack<&str> {
 #[allow(dead_code)]
 pub fn solve() -> Result<(), Box<dyn std::error::Error>> {
 
-    let mut supply_stacks = SupplyStacks(
+    let mut supply_stacks =
         vec![
-            create_stack(&["W", "B", "D", "N", "C", "F", "J"]),
-            create_stack(&["P", "Z", "V", "Q", "L", "S", "T"]),
-            create_stack(&["P", "Z", "B", "G", "J", "T"]),
-            create_stack(&["D", "T", "L", "J", "Z", "B", "H", "C"]),
-            create_stack(&["G", "V", "B", "J", "S"]),
-            create_stack(&["P", "S", "Q"]),
-            create_stack(&["B", "V", "D", "F", "L", "M", "P", "N"]),
-            create_stack(&["P", "S", "M", "F", "B", "D", "L", "R"]),
-            create_stack(&["V", "D", "T", "R"]),
-        ].into_iter().collect::<Stack<&str>>()
-    );
+            vec!["W", "B", "D", "N", "C", "F", "J"],
+            vec!["P", "Z", "V", "Q", "L", "S", "T"],
+            vec!["P", "Z", "B", "G", "J", "T"],
+            vec!["D", "T", "L", "J", "Z", "B", "H", "C"],
+            vec!["G", "V", "B", "J", "S"],
+            vec!["P", "S", "Q"],
+            vec!["B", "V", "D", "F", "L", "M", "P", "N"],
+            vec!["P", "S", "M", "F", "B", "D", "L", "R"],
+            vec!["V", "D", "T", "R"]
+        ];
 
     let file = File::open("src/inputs/day5.txt")?;
     let reader = BufReader::new(file);
@@ -51,15 +48,25 @@ pub fn solve() -> Result<(), Box<dyn std::error::Error>> {
         let mut numbers = Vec::new();
         let ss = format!("{}", line?);
         for caps in re.captures_iter(&ss) {
-            numbers.push(caps[0].parse::<i32>().unwrap())
+            numbers.push(caps[0].parse::<usize>().unwrap())
         }
         let qtd = numbers[0];
         let from = numbers[1] - 1;
         let to = numbers[2] - 1;
+        let mut temp_stack = Vec::new();
         for _ in 0..qtd {
-            let v = supply_stacks.0[from].pop();
-            supply_stacks.0[to].push(v);
+            let v = supply_stacks[from].pop().unwrap();
+            temp_stack.push(v);
+        }
+        for _ in 0..qtd {
+            let v = temp_stack.pop().unwrap();
+            supply_stacks[to].push(v);
         }
     }
+    let mut result = String::new();
+    for stack in supply_stacks.iter() {
+        result.push_str(format!("{}", stack[stack.len()-1]).as_str())
+    }
+    println!("{}", result);
     Ok(())
 }

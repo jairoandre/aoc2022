@@ -38,7 +38,7 @@ pub fn solve() -> Result<(), Box<dyn std::error::Error>> {
 
 fn score_buffer(str_buffer: &Vec<Vec<u8>>) -> u32 {
     let vec_1 = &str_buffer[0];
-    'outer: for i in 0..vec_1.len() {
+    for i in 0..vec_1.len() {
         let vec_2 = &str_buffer[1];
         for j in 0..vec_2.len() {
             if vec_1[i] == vec_2[j] {
@@ -65,7 +65,6 @@ pub fn solve_2() -> Result<(), Box<dyn std::error::Error>> {
     let mut total = 0;
     let mut line_count = 0;
     let mut str_buffer: Vec<Vec<u8>> = vec![vec![]; 3];
-    let mut total_lines = 0;
 
     for line in reader.lines() {
         let ss = format!("{}", line?);
@@ -78,7 +77,6 @@ pub fn solve_2() -> Result<(), Box<dyn std::error::Error>> {
             str_buffer[0] = s_vec;
             line_count = 1;
         }
-        total_lines += 1;
     }
     total += score_buffer(&str_buffer);
     println!("score : {}", total);
